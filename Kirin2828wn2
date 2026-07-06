@@ -858,27 +858,35 @@ Tab:AddToggle({
 		end
 	end
 })
-local AutoPrompt = false
+local AutoNextArea = false
 
 Tab:AddToggle({
-	Name = "Auto Fire ProximityPrompt",
-	Default = false,
-	Callback = function(Value)
-		AutoPrompt = Value
+    Name = "Auto NextArea Proximity",
+    Default = false,
+    Callback = function(Value)
+        AutoNextArea = Value
 
-		if AutoPrompt then
-			task.spawn(function()
-				while AutoPrompt do
-					for _, v in ipairs(workspace:GetDescendants()) do
-						if v:IsA("ProximityPrompt") then
-							pcall(function()
-								fireproximityprompt(v)
-							end)
-						end
-					end
-					task.wait(0.1)
-				end
-			end)
-		end
-	end
+        if Value then
+            task.spawn(function()
+                while AutoNextArea do
+                    local stage = workspace:FindFirstChild("Dungeon")
+                        and workspace.Dungeon:FindFirstChild("Stages")
+                        and workspace.Dungeon.Stages:FindFirstChild("0")
+
+                    if stage then
+                        local prompt = stage.NextArea.Part.Attachment:FindFirstChild("ProximityPrompt")
+                        if prompt then
+                            pcall(function()
+                                fireproximityprompt(prompt)
+                            end)
+                        end
+                    end
+
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
 })
+
+OrionLib:Init()
