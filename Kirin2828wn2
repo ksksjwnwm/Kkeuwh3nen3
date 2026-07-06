@@ -858,3 +858,27 @@ Tab:AddToggle({
 		end
 	end
 })
+local AutoPrompt = false
+
+Tab:AddToggle({
+	Name = "Auto Fire ProximityPrompt",
+	Default = false,
+	Callback = function(Value)
+		AutoPrompt = Value
+
+		if AutoPrompt then
+			task.spawn(function()
+				while AutoPrompt do
+					for _, v in ipairs(workspace:GetDescendants()) do
+						if v:IsA("ProximityPrompt") then
+							pcall(function()
+								fireproximityprompt(v)
+							end)
+						end
+					end
+					task.wait(0.1)
+				end
+			end)
+		end
+	end
+})
