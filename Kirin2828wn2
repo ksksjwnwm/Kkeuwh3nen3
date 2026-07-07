@@ -890,3 +890,37 @@ Tab:AddToggle({
 })
 
 OrionLib:Init()
+local AutoNextArea = false
+local AutoThread
+
+Tab:AddToggle({
+    Name = "Auto NextArea Proximity",
+    Default = false,
+    Callback = function(Value)
+        AutoNextArea = Value
+
+        if Value and not AutoThread then
+            AutoThread = task.spawn(function()
+                while AutoNextArea do
+                    pcall(function()
+                        local dungeon = workspace:WaitForChild("Dungeon")
+                        local stages = dungeon:WaitForChild("Stages")
+                        local stage = stages:WaitForChild("0")
+                        local prompt = stage:WaitForChild("NextArea")
+                            :WaitForChild("Part")
+                            :WaitForChild("Attachment")
+                            :WaitForChild("ProximityPrompt")
+
+                        fireproximityprompt(prompt)
+                    end)
+
+                    task.wait(0.1)
+                end
+
+                AutoThread = nil
+            end)
+        end
+    end
+})
+
+OrionLib:Init()
